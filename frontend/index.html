@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ATLAS - A Triaged Learning Agent Syndicate Interactive Dashboard">
+  <title>ATLAS Syndicate | Autonomous Multi-Agent Engineering</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top Navigation & Brand Header -->
+  <header class="atlas-header">
+    <div class="header-left">
+      <div class="brand-badge">
+        <div class="brand-logo-hex">
+          <span class="logo-text">⬡</span>
+        </div>
+        <div class="brand-titles">
+          <div class="brand-name-row">
+            <span class="brand-name">ATLAS</span>
+            <span class="brand-tag">PROTOTYPE 1</span>
+          </div>
+          <span class="brand-subtitle">A Triaged Learning Agent Syndicate</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- System Overview Ribbon -->
+    <div class="header-center">
+      <div class="system-metric-pill">
+        <span class="metric-label">STATUS</span>
+        <span id="global-status-badge" class="metric-val status-idle">
+          <span class="status-pulse"></span>
+          <span id="global-status-text">SYSTEM READY</span>
+        </span>
+      </div>
+      <div class="system-metric-pill">
+        <span class="metric-label">TASKS RUN</span>
+        <span id="header-task-count" class="metric-val">0</span>
+      </div>
+      <div class="system-metric-pill">
+        <span class="metric-label">AVG LATENCY</span>
+        <span id="header-avg-latency" class="metric-val">0 ms</span>
+      </div>
+      <div class="system-metric-pill">
+        <span class="metric-label">TOTAL TOKENS</span>
+        <span id="header-total-tokens" class="metric-val">0</span>
+      </div>
+      <div class="system-metric-pill">
+        <span class="metric-label">META ITERATIONS</span>
+        <span id="header-meta-iterations" class="metric-val">0</span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="backend-conn-status" id="backend-status">
+        <span class="conn-dot dot-online"></span>
+        <span id="backend-status-text">BACKEND CONNECTED</span>
+      </div>
+      <button id="btn-refresh-all" class="btn-icon" title="Refresh Dashboard State">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+      </button>
+      <a href="/docs" target="_blank" class="btn-api-docs" title="Open FastAPI OpenAPI Documentation">
+        <span>API DOCS</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- Notification Banner Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Main Grid Dashboard -->
+  <main class="dashboard-grid">
+
+    <!-- PANEL 1: TASK INGESTION & SUBMISSION -->
+    <section class="subsystem-card panel-task-submission" id="panel-1">
+      <div class="panel-header">
+        <div class="panel-title-wrap">
+          <span class="panel-icon">📥</span>
+          <div class="panel-title-text">
+            <h2>Task Submission & Ingestion</h2>
+            <p>Ingest raw software engineering directives into strictly typed Pydantic payloads</p>
+          </div>
+        </div>
+        <span class="panel-domain-badge">INGESTION GATEWAY</span>
+      </div>
+
+      <!-- Quick Preset Examples -->
+      <div class="preset-section">
+        <span class="preset-title">QUICK PRESETS:</span>
+        <div class="preset-buttons">
+          <button type="button" class="btn-preset" data-preset="bugfix">
+            <span class="preset-p-badge p0">P0</span>
+            <span>🐛 Fix Null Pointer in State Reducer</span>
+          </button>
+          <button type="button" class="btn-preset" data-preset="research">
+            <span class="preset-p-badge p1">P1</span>
+            <span>🔬 Explore HNSW Vector Indexing</span>
+          </button>
+          <button type="button" class="btn-preset" data-preset="refactor">
+            <span class="preset-p-badge p2">P2</span>
+            <span>⚡ Refactor Routing Table Channels</span>
+          </button>
+          <button type="button" class="btn-preset" data-preset="security">
+            <span class="preset-p-badge p1">P1</span>
+            <span>🛡️ Patch PyJWT Algorithm Vulnerability</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Submission Form -->
+      <form id="task-form" class="task-form">
+        <div class="form-group">
+          <label for="task-title">Task Title <span class="required">*</span></label>
+          <input type="text" id="task-title" required placeholder="e.g. Fix IndexError in task priority queue reducer" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-half">
+            <label for="task-type">Task Type <span class="required">*</span></label>
+            <select id="task-type" required>
+              <option value="BUG_FIX">BUG_FIX (Maintenance / Patch)</option>
+              <option value="FEATURE_IMPLEMENTATION">FEATURE_IMPLEMENTATION (Additive)</option>
+              <option value="EXPLORATION_RESEARCH">EXPLORATION_RESEARCH (R&amp;D / Spikes)</option>
+              <option value="REFACTORING">REFACTORING (Clean Code / Optimization)</option>
+              <option value="DEPENDENCY_SECURITY">DEPENDENCY_SECURITY (Vulnerabilities)</option>
+            </select>
+          </div>
+
+          <div class="form-group col-half">
+            <label for="task-priority">Priority Level <span class="required">*</span></label>
+            <select id="task-priority" required>
+              <option value="P0" class="opt-p0">P0 — Critical / Blocker (SLA &lt; 5m)</option>
+              <option value="P1" class="opt-p1">P1 — High Urgency (SLA &lt; 30m)</option>
+              <option value="P2" class="opt-p2" selected>P2 — Medium Urgency (Standard Queue)</option>
+              <option value="P3" class="opt-p3">P3 — Low Urgency (Background Backlog)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="task-description">Task Description &amp; Acceptance Criteria <span class="required">*</span></label>
+          <textarea id="task-description" rows="3" required placeholder="Describe defect details, reproduction steps, or architectural questions..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="task-code">Optional Code Snippet / Context</label>
+          <textarea id="task-code" rows="3" class="code-font" placeholder="# Paste relevant stack trace, function, or target file snippet..."></textarea>
+        </div>
+
+        <div class="form-footer">
+          <div class="constraints-summary">
+            <span class="constraint-pill">⏱️ Timeout: 300s</span>
+            <span class="constraint-pill">🛡️ Scoped Sandbox</span>
+            <span class="constraint-pill">📊 Vector Seeding On</span>
+          </div>
+
+          <button type="submit" id="btn-submit-task" class="btn-primary">
+            <span class="btn-spinner" id="submit-spinner"></span>
+            <span class="btn-text">🚀 Ingest &amp; Dispatch to Triage</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- PANEL 2: LIVE EXECUTION & TRIAGE FLOW -->
+    <section class="subsystem-card panel-execution-flow" id="panel-2">
+      <div class="panel-header">
+        <div class="panel-title-wrap">
+          <span class="panel-icon">🔀</span>
+          <div class="panel-title-text">
+            <h2>Live Execution &amp; Triage Flow</h2>
+            <p>Supervisor routing heuristics, worker domain assignment, and state machine transitions</p>
+          </div>
+        </div>
+        <span class="panel-domain-badge" id="execution-active-step">READY</span>
+      </div>
+
+      <!-- Interactive Node Pipeline Visualizer -->
+      <div class="pipeline-flow-wrapper">
+        <div class="pipeline-track">
+          
+          <!-- Step 1 -->
+          <div class="flow-node" id="node-ingest">
+            <div class="flow-icon">📥</div>
+            <div class="flow-info">
+              <span class="flow-title">Ingestion</span>
+              <span class="flow-status">Normalizer</span>
+            </div>
+            <div class="flow-node-badge">Pydantic V2</div>
+          </div>
+          <div class="flow-arrow" id="arrow-1"><span></span></div>
+
+          <!-- Step 2 -->
+          <div class="flow-node" id="node-triage">
+            <div class="flow-icon">🧠</div>
+            <div class="flow-info">
+              <span class="flow-title">Supervisor</span>
+              <span class="flow-status">Triage Evaluation</span>
+            </div>
+            <div class="flow-node-badge">Zero Tools</div>
+          </div>
+          <div class="flow-arrow" id="arrow-2"><span></span></div>
+
+          <!-- Step 3: Branching Worker -->
+          <div class="flow-node" id="node-worker">
+            <div class="flow-icon" id="worker-flow-icon">⚙️</div>
+            <div class="flow-info">
+              <span class="flow-title" id="worker-flow-title">Domain Worker</span>
+              <span class="flow-status" id="worker-flow-status">Pending Routing</span>
+            </div>
+            <div class="flow-node-badge" id="worker-flow-badge">Isolated</div>
+          </div>
+          <div class="flow-arrow" id="arrow-3"><span></span></div>
+
+          <!-- Step 4 -->
+          <div class="flow-node" id="node-verify">
+            <div class="flow-icon">🛡️</div>
+            <div class="flow-info">
+              <span class="flow-title">Verification</span>
+              <span class="flow-status">AST / Sandbox</span>
+            </div>
+            <div class="flow-node-badge">MCP Enforced</div>
+          </div>
+          <div class="flow-arrow" id="arrow-4"><span></span></div>
+
+          <!-- Step 5 -->
+          <div class="flow-node" id="node-complete">
+            <div class="flow-icon">🏁</div>
+            <div class="flow-info">
+              <span class="flow-title">Global State</span>
+              <span class="flow-status">Completed</span>
+            </div>
+            <div class="flow-node-badge">Merged</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Triage Decision Card -->
+      <div class="triage-decision-card" id="triage-decision-card">
+        <div class="card-row">
+          <div class="decision-stat">
+            <span class="d-label">ASSIGNED DOMAIN:</span>
+            <span class="d-val domain-badge" id="decision-domain">Awaiting Task</span>
+          </div>
+          <div class="decision-stat">
+            <span class="d-label">WORKER AGENT:</span>
+            <span class="d-val" id="decision-worker">—</span>
+          </div>
+          <div class="decision-stat">
+            <span class="d-label">CLASSIFICATION CONFIDENCE:</span>
+            <span class="d-val" id="decision-confidence">—</span>
+          </div>
+          <div class="decision-stat">
+            <span class="d-label">DYNAMIC PROMPT:</span>
+            <span class="d-val code-inline" id="decision-prompt">—</span>
+          </div>
+        </div>
+        <div class="rationale-box">
+          <span class="rationale-title">Triage Supervisor Rationale:</span>
+          <p id="decision-rationale" class="rationale-text">Submit a task from Panel 1 to trigger supervisor domain routing, memory lookup, and worker dispatch.</p>
+        </div>
+      </div>
+
+      <!-- Live Execution Activity Stream -->
+      <div class="live-activity-stream">
+        <div class="stream-header">
+          <span class="stream-title">AGENT EXECUTION ACTIVITY LOG</span>
+          <span class="stream-status" id="stream-status-pill">STREAM IDLE</span>
+        </div>
+        <div class="stream-log-container code-font" id="execution-logs">
+          <div class="log-line log-system">[00:00:00] ATLAS Prototype 1 Engine initialized. Ready for task ingestion.</div>
+          <div class="log-line log-info">[00:00:00] Vector memory seeded with 9 items (Dynamic Prompts, MCP Toolsets, Golden Solutions).</div>
+          <div class="log-line log-info">[00:00:00] Context isolation boundaries active: Supervisor [Zero Tools] | Maintenance [Filesystem/Git/Test] | R&amp;D [Web/Docs/Sandbox].</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANEL 3: STATE INSPECTOR (GLOBAL STATE vs LOCAL STATE) -->
+    <section class="subsystem-card panel-state-inspector" id="panel-3">
+      <div class="panel-header">
+        <div class="panel-title-wrap">
+          <span class="panel-icon">🔬</span>
+          <div class="panel-title-text">
+            <h2>State Inspector: Context Isolation Architecture</h2>
+            <p>Live side-by-side comparison demonstrating zero-pollution boundary between Global and Local state</p>
+          </div>
+        </div>
+        <span class="panel-domain-badge isolation-badge">CONTEXT ISOLATION ENFORCED</span>
+      </div>
+
+      <!-- Isolation Architecture Explainer Banner -->
+      <div class="isolation-banner">
+        <div class="isolation-icon">🛡️</div>
+        <div class="isolation-text">
+          <strong>Context Isolation Guarantee:</strong> The Worker's noisy intermediate scratchpad, trial hypotheses, and raw tool output dumps are strictly quarantined in <code>LocalState</code>. Only clean, verified patches and concise syntheses are committed to <code>GlobalState</code>, eliminating context explosion.
+        </div>
+      </div>
+
+      <!-- Side-by-Side Comparison Columns -->
+      <div class="state-columns-container">
+
+        <!-- Column 1: Global State -->
+        <div class="state-column global-state-col">
+          <div class="col-header">
+            <div class="col-title-wrap">
+              <span class="state-type-badge global-badge">🌐 GLOBAL STATE</span>
+              <span class="visibility-tag">SUPERVISOR &amp; SYNDICATE VISIBLE</span>
+            </div>
+            <span class="state-key-count" id="global-key-count">Task State</span>
+          </div>
+
+          <div class="state-body">
+            <div class="state-section">
+              <span class="state-sec-label">CURRENT TASK ID:</span>
+              <div class="state-field code-font" id="global-task-id">None</div>
+            </div>
+
+            <div class="state-section">
+              <span class="state-sec-label">EXECUTION STATUS:</span>
+              <div class="state-field" id="global-status">
+                <span class="status-pill status-ready">IDLE</span>
+              </div>
+            </div>
+
+            <div class="state-section">
+              <span class="state-sec-label">ACTIVE TASKS IN GRAPH:</span>
+              <div class="state-field code-font" id="global-active-tasks">0 active</div>
+            </div>
+
+            <div class="state-section">
+              <span class="state-sec-label">PUBLIC RESULT SYNTHESIS:</span>
+              <div class="state-box" id="global-result-summary">Awaiting task completion...</div>
+            </div>
+
+            <div class="state-section">
+              <span class="state-sec-label">VERIFIED CODE PATCH (UNIFIED DIFF):</span>
+              <pre class="code-diff-viewer code-font" id="global-code-patch">No patch generated yet.</pre>
+            </div>
+
+            <div class="state-section">
+              <span class="state-sec-label">ROUTING HISTORY LOG:</span>
+              <div class="history-list" id="global-routing-history">
+                <div class="history-empty">No routing events recorded</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column 2: Local State -->
+        <div class="state-column local-state-col">
+          <div class="col-header">
+            <div class="col-title-wrap">
+              <span class="state-type-badge local-badge">🔒 LOCAL STATE (WORKER SCRATCHPAD)</span>
+              <span class="visibility-tag tag-isolated">STRICTLY QUARANTINED</span>
+            </div>
+            <span class="state-key-count" id="local-scope-badge">Isolated Sandbox</span>
+          </div>
+
+          <div class="state-body">
+            <div class="state-section">
+              <span class="state-sec-label">WORKER DOMAIN &amp; BOUNDARY:</span>
+              <div class="state-field" id="local-worker-domain">
+                <span class="domain-pill">Awaiting Dispatch</span>
+              </div>
+            </div>
+
+            <div class="state-section">
+              <span class="state-sec-label">REASONING DEDUCTIONS (SCRATCHPAD):</span>
+              <div class="scratchpad-stream code-font" id="local-scratchpad">
+                <div class="scratchpad-empty">Worker reasoning scratchpad will stream here during execution...</div>
+              </div>
+            </div>
+
+            <div class="state-section">
+              <span class="state-sec-label">HYPOTHESES EVALUATION:</span>
+              <div class="hypotheses-list" id="local-hypotheses">
+                <div class="scratchpad-empty">No hypotheses formulated yet</div>
+              </div>
+            </div>
+
+            <div class="state-section">
+              <span class="state-sec-label">RAW MCP TOOL INVOCATIONS:</span>
+              <pre class="code-diff-viewer code-font" id="local-tool-calls">No tool calls executed in this turn.</pre>
+            </div>
+
+            <div class="state-section">
+              <span class="state-sec-label">RAW EXECUTION LOGS &amp; TEST TRACES:</span>
+              <div class="raw-logs-box code-font" id="local-raw-logs">Sandbox logs quiescent.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PANEL 4: TELEMETRY & TOKEN METRICS -->
+    <section class="subsystem-card panel-telemetry-metrics" id="panel-4">
+      <div class="panel-header">
+        <div class="panel-title-wrap">
+          <span class="panel-icon">📊</span>
+          <div class="panel-title-text">
+            <h2>Telemetry &amp; Token Tracing</h2>
+            <p>Pydantic Logfire / OpenTelemetry instrumentation, latency profiling, and cost accounting</p>
+          </div>
+        </div>
+        <span class="panel-domain-badge">LOGFIRE COMPATIBLE</span>
+      </div>
+
+      <!-- Metric Cards Banner -->
+      <div class="metrics-cards-grid">
+        <div class="metric-card">
+          <div class="m-title">TOTAL LATENCY</div>
+          <div class="m-val" id="metric-latency">0 <span class="m-unit">ms</span></div>
+          <div class="m-sub">End-to-end task cycle</div>
+        </div>
+        <div class="metric-card">
+          <div class="m-title">INPUT TOKENS</div>
+          <div class="m-val" id="metric-tokens-in">0</div>
+          <div class="m-sub">Prompts &amp; Context injected</div>
+        </div>
+        <div class="metric-card">
+          <div class="m-title">OUTPUT TOKENS</div>
+          <div class="m-val" id="metric-tokens-out">0</div>
+          <div class="m-sub">Reasoning &amp; Patch completions</div>
+        </div>
+        <div class="metric-card">
+          <div class="m-title">ESTIMATED COST</div>
+          <div class="m-val highlight-cost" id="metric-cost">$0.0000</div>
+          <div class="m-sub">Blended Sonnet/GPT-4o rates</div>
+        </div>
+      </div>
+
+      <!-- Trace Identifier -->
+      <div class="trace-info-bar">
+        <div class="trace-id-wrap">
+          <span class="trace-label">CURRENT TRACE ID:</span>
+          <span class="trace-val code-font" id="telemetry-trace-id">—</span>
+        </div>
+        <button type="button" id="btn-copy-trace" class="btn-sm">Copy Trace</button>
+      </div>
+
+      <!-- Per-Node Breakdown Table -->
+      <div class="node-breakdown-section">
+        <span class="section-title">PER-NODE EXECUTION SPAN BREAKDOWN:</span>
+        <div class="breakdown-table-wrapper">
+          <table class="breakdown-table">
+            <thead>
+              <tr>
+                <th>Graph Node / Span</th>
+                <th>Duration (ms)</th>
+                <th>Tokens In</th>
+                <th>Tokens Out</th>
+                <th>Cost (USD)</th>
+                <th>Distribution</th>
+              </tr>
+            </thead>
+            <tbody id="telemetry-node-table">
+              <tr>
+                <td colspan="6" class="table-empty">No telemetry spans recorded yet. Execute a task to view span attribution.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANEL 5: LONG-TERM MEMORY EXPLORER -->
+    <section class="subsystem-card panel-memory-explorer" id="panel-5">
+      <div class="panel-header">
+        <div class="panel-title-wrap">
+          <span class="panel-icon">🧠</span>
+          <div class="panel-title-text">
+            <h2>Long-Term Vector Memory Explorer</h2>
+            <p>Semantic cosine similarity store for dynamic agent prompts, MCP tool boundaries, and past solutions</p>
+          </div>
+        </div>
+        <button type="button" id="btn-add-memory-toggle" class="btn-sm btn-outline">➕ Add Memory</button>
+      </div>
+
+      <!-- Memory Controls -->
+      <div class="memory-controls">
+        <div class="memory-search-bar">
+          <input type="text" id="memory-search-input" placeholder="Search vector memory by semantic query (e.g. 'HNSW indexing' or 'null pointer')..." />
+          <button type="button" id="btn-search-memory" class="btn-primary-sm">Search</button>
+          <button type="button" id="btn-clear-search" class="btn-sm">Clear</button>
+        </div>
+
+        <div class="memory-filter-pills">
+          <button type="button" class="filter-pill active" data-domain="ALL">All Items</button>
+          <button type="button" class="filter-pill" data-domain="TRIAGE">Triage Prompts</button>
+          <button type="button" class="filter-pill" data-domain="MAINTENANCE">Maintenance</button>
+          <button type="button" class="filter-pill" data-domain="RESEARCH_DEV">Research &amp; Dev</button>
+        </div>
+      </div>
+
+      <!-- Add Memory Form (Hidden by default) -->
+      <div id="add-memory-form-container" class="add-memory-drawer hidden">
+        <form id="add-memory-form" class="add-mem-form">
+          <div class="form-row">
+            <div class="form-group col-half">
+              <label for="mem-key">Key Identifier</label>
+              <input type="text" id="mem-key" required placeholder="e.g. solution:jwt_signature_check" />
+            </div>
+            <div class="form-group col-half">
+              <label for="mem-domain">Domain Scope</label>
+              <select id="mem-domain" required>
+                <option value="MAINTENANCE">MAINTENANCE</option>
+                <option value="RESEARCH_DEV">RESEARCH_DEV</option>
+                <option value="TRIAGE">TRIAGE</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="mem-tags">Tags (comma separated)</label>
+            <input type="text" id="mem-tags" placeholder="e.g. security, jwt, patch, fast-path" />
+          </div>
+          <div class="form-group">
+            <label for="mem-content">Content (Prompt, Tool Schema, or Solution)</label>
+            <textarea id="mem-content" rows="3" required placeholder="Provide knowledge text for 64-dim semantic embedding projection..."></textarea>
+          </div>
+          <div class="form-actions-row">
+            <button type="button" id="btn-cancel-add-mem" class="btn-sm">Cancel</button>
+            <button type="submit" class="btn-primary-sm">Save &amp; Embed</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Memory Items List -->
+      <div class="memory-items-container" id="memory-items-list">
+        <div class="memory-loading">Loading vector memory items...</div>
+      </div>
+    </section>
+
+    <!-- PANEL 6: META-IMPROVER & SELF-IMPROVEMENT LOOP -->
+    <section class="subsystem-card panel-meta-improver" id="panel-6">
+      <div class="panel-header">
+        <div class="panel-title-wrap">
+          <span class="panel-icon">🔄</span>
+          <div class="panel-title-text">
+            <h2>Meta-Improver &amp; Self-Improvement Loop</h2>
+            <p>Offline telemetry mining to optimize system prompts, prune redundant tool queries, and compress tokens</p>
+          </div>
+        </div>
+        <button type="button" id="btn-run-meta-improver" class="btn-primary">
+          <span class="btn-spinner" id="meta-spinner"></span>
+          <span>⚡ Run Meta-Improver</span>
+        </button>
+      </div>
+
+      <!-- Meta Overview Stats -->
+      <div class="meta-stats-row">
+        <div class="meta-stat-box">
+          <span class="meta-stat-label">AVERAGE TOKEN REDUCTION</span>
+          <span class="meta-stat-val highlight-green" id="meta-token-savings">-24.6%</span>
+          <span class="meta-stat-sub">Across system prompts</span>
+        </div>
+        <div class="meta-stat-box">
+          <span class="meta-stat-label">LATENCY GAIN</span>
+          <span class="meta-stat-val highlight-cyan" id="meta-latency-gain">-140 ms</span>
+          <span class="meta-stat-sub">Faster TTFT (first token)</span>
+        </div>
+        <div class="meta-stat-box">
+          <span class="meta-stat-label">MUTATIONS COMMITTED</span>
+          <span class="meta-stat-val" id="meta-mutations-count">3 active</span>
+          <span class="meta-stat-sub">Validated against Golden Evals</span>
+        </div>
+      </div>
+
+      <!-- Prompt Before / After Optimization Diff Viewer -->
+      <div class="meta-diff-container">
+        <div class="meta-diff-header">
+          <span class="diff-title" id="diff-target-agent">AGENT PROMPT OPTIMIZATION: TriageSupervisor</span>
+          <span class="diff-savings-badge" id="diff-savings-badge">-22.5% Tokens</span>
+        </div>
+
+        <div class="diff-viewer-grid">
+          <!-- Before Column -->
+          <div class="diff-col before-col">
+            <div class="diff-col-header">
+              <span class="badge-before">ORIGINAL PROMPT (BEFORE)</span>
+              <span class="token-count-tag" id="before-token-count">~120 tokens</span>
+            </div>
+            <pre class="diff-code code-font" id="diff-before-text">You are the ATLAS Triage Supervisor. Evaluate incoming tasks, identify technical domain (MAINTENANCE vs RESEARCH_DEV), analyze priority constraints, query vector memory for historical solutions, and route to specialized workers with full context without executing tools directly.</pre>
+          </div>
+
+          <!-- After Column -->
+          <div class="diff-col after-col">
+            <div class="diff-col-header">
+              <span class="badge-after">OPTIMIZED PROMPT (AFTER)</span>
+              <span class="token-count-tag" id="after-token-count">~93 tokens</span>
+            </div>
+            <pre class="diff-code code-font" id="diff-after-text">You are the ATLAS Triage Supervisor. Classify tasks into MAINTENANCE or RESEARCH_DEV. Match against vector memory. Emit structured routing decision. Zero tool execution.</pre>
+          </div>
+        </div>
+
+        <div class="optimization-rationale-box">
+          <span class="opt-label">Optimization Rationale:</span>
+          <p id="diff-rationale-text">Pruned redundant role verbosity while reinforcing critical zero-tool boundary and structured output contract. Preserves classification accuracy with 22.5% fewer prompt tokens.</p>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="atlas-footer">
+    <div class="footer-left">
+      <span>ATLAS Prototype 1 &bull; Autonomous Syndicate Architecture</span>
+    </div>
+    <div class="footer-center">
+      <span>LangGraph StateGraph &bull; Pydantic V2 &bull; Model Context Protocol &bull; Vector Memory &bull; Logfire</span>
+    </div>
+    <div class="footer-right">
+      <span>Target Directory: <code>demos/prototype-1</code></span>
+    </div>
+  </footer>
+
+  <!-- Application Script -->
+  <script src="app.js"></script>
+</body>
+</html>
